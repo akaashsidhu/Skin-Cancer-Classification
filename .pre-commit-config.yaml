@@ -1,0 +1,9 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.2.1
+    hooks:
+    -   id: flake8
+    -   id: requirements-txt-fixer
+    -   id: double-quote-string-fixer
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
