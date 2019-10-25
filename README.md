@@ -4,6 +4,10 @@
 
 Install all dependencies using `pip install -r requirements.txt`
 
+We are using `.env` to manage environment variables such as API tokens. Copy `.env.example` as `.env` and fill in the environment variables accordingly.
+
+### Connecting to the Kaggle API
+
 This repo uses the Kaggle API to fetch the dataset. Follow these steps to access the Kaggle API:
 
 1. Create a Kaggle account
