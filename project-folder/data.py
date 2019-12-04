@@ -74,17 +74,6 @@ class DataPipeline:
                 sys.exit()
         self.skin_data = pd.read_csv('data/hmnist_28_28_RGB.csv')
 
-    def download_files_from_kaggle(self):
-        if not os.path.isfile('data/hmnist_28_28_RGB.csv'):
-            try:
-                kaggle.api.authenticate()
-                kaggle.api.dataset_download_files('kmader/skin-cancer-mnist-ham10000',  # noqa
-                                            path=self.data_path, unzip=True)
-            except TimeoutError:
-                print('TimeoutError: manually download and try again')
-                sys.exit()
-        self.skin_data = pd.read_csv('data/hmnist_28_28_RGB.csv')
-
     # This will be the entry point
     def data_pipeline_runner(self):
         self.download_files_from_kaggle()
