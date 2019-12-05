@@ -2,20 +2,22 @@ import os
 import sys
 import kaggle
 import pandas as pd
+import numpy as np
 
 from dotenv import load_dotenv
+
+kaggle.api.authenticate()
 
 
 class DataPipeline:
     def __init__(self):
         # List of preprocessing steps
         # Applied in the order they appear
-        self.preprocessing_steps = [
-                                        self.placeholder_callable_1,
-                                        self.placeholder_callable_2,
-                                    ]
+
         self.data_path = os.path.join(os.getcwd(), 'data')
         self.skin_data: pd.DataFrame
+        self.X: np.array
+        self.Y: np.array
 
         # Loading environment variables
         dotenv_path = os.path.dirname(os.getcwd())
@@ -26,16 +28,29 @@ class DataPipeline:
         Example: normalization
     '''
 
-    def placeholder_callable_1(self, row):
-        return row
+    def normalization(self):
+        '''
+            We want to divide by each column by 255 to remove distortions
+            caused by lights and shadows in an image.The range can be described
+            with a 0.0-1.0 where 0.0 means 0 (0x00) and 1.0 means 255 (0xFF)
+        '''
+        self.X = self.skin_data.drop(columns='label')/255
+        self.Y = self.skin_data['label']
 
-    def placeholder_callable_2(self, row):
-        return row
+    def reshape_img(self):
+        '''
+            Reshape images to 28 by 28 and hot encode the Y label.
+        '''
+        num_rows, num_cols = 28, 28
+        num_classes = 7
+
+        self.X = np.array(self.X)
+        self.X = self.X.reshape(self.X.shape[0], num_rows, num_cols, 3)
+        self.Y = np.eye(num_classes)[np.array(self.Y.astype(int)).reshape(-1)]
 
     '''
         End preprocessing steps
     '''
-
     def download_files_from_kaggle(self):
         if not os.path.isfile('data/hmnist_28_28_RGB.csv'):
             try:
@@ -50,7 +65,5 @@ class DataPipeline:
     # This will be the entry point
     def data_pipeline_runner(self):
         self.download_files_from_kaggle()
-        for func in self.preprocessing_steps:
-            # If it's easier, function can be applied to column instead of row
-            self.skin_data = self.skin_data.apply(func, axis=1)
-            print('Finished applying {}'.format(func.__name__))
+        self.normalization()
+        self.reshape_img()
