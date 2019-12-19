@@ -1,4 +1,4 @@
-# SM_project
+# Skin Cancer Classification
 
 ## Usage Requirements
 
