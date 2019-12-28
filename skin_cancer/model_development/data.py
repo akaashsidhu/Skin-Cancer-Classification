@@ -17,7 +17,7 @@ class DataPipeline:
         self.data_path = os.path.join(os.getcwd(), 'data')
         self.skin_data: pd.DataFrame
         self.X: np.array
-        self.Y: np.array
+        self.y: np.array
 
         # Loading environment variables
         dotenv_path = os.path.dirname(os.getcwd())
@@ -35,7 +35,7 @@ class DataPipeline:
             with a 0.0-1.0 where 0.0 means 0 (0x00) and 1.0 means 255 (0xFF)
         '''
         self.X = self.skin_data.drop(columns='label')/255
-        self.Y = self.skin_data['label']
+        self.y = self.skin_data['label']
 
     def reshape_img(self):
         '''
@@ -46,7 +46,7 @@ class DataPipeline:
 
         self.X = np.array(self.X)
         self.X = self.X.reshape(self.X.shape[0], num_rows, num_cols, 3)
-        self.Y = np.eye(num_classes)[np.array(self.Y.astype(int)).reshape(-1)]
+        self.y = np.eye(num_classes)[np.array(self.y.astype(int)).reshape(-1)]
 
     '''
         End preprocessing steps
