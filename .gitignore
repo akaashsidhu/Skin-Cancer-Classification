@@ -1,5 +1,5 @@
 .DS_Store
-.mypy_cache/
-skin_cancer/.mypy_cache
+*.mypy_cache/
+*__pycache__/
 .env
 *.csv

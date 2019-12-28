@@ -52,7 +52,7 @@ class DataPipeline:
         End preprocessing steps
     '''
     def download_files_from_kaggle(self):
-        if not os.path.isfile('data/hmnist_28_28_RGB.csv'):
+        if not os.path.isfile(os.path.join(self.data_path, 'hmnist_28_28_RGB.csv')):  # noqa
             try:
                 kaggle.api.authenticate()
                 kaggle.api.dataset_download_files('kmader/skin-cancer-mnist-ham10000',  # noqa
@@ -60,7 +60,7 @@ class DataPipeline:
             except TimeoutError:
                 print('TimeoutError: manually download and try again')
                 sys.exit()
-        self.skin_data = pd.read_csv('data/hmnist_28_28_RGB.csv')
+        self.skin_data = pd.read_csv(os.path.join(self.data_path, 'hmnist_28_28_RGB.csv'))  # noqa
 
     # This will be the entry point
     def data_pipeline_runner(self):
