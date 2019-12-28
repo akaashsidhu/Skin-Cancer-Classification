@@ -1,0 +1,24 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.6.4
+
+    working_directory: ~/Skin-Cancer-Classification
+
+    steps:
+      - checkout
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            sudo apt update
+            pip install -r requirements.txt
+      - run:
+          name: enforce styleguide
+          command: |
+            . venv/bin/activate
+            flake8 skin_cancer
+      # Run test cases here
+      # Deployment instructions here
