@@ -37,11 +37,12 @@ class Model:
         self.model: Sequential
 
     def split(self):
-        self.X_train, self.X_test, self.y_train, self.y_test =
-        train_test_split(self.X, self.y, test_size=0.20, random_state=42)
-        self.X_train, self.X_validate, self.y_train, self.y_test
-        = train_test_split(self.X_train, self.y_train, test_size=0.20,
-                           random_state=42)
+        self.X_train, self.X_test, self.y_train,
+        self.y_test = train_test_split(self.X, self.y,
+                                       test_size=0.20, random_state=42)
+        self.X_train, self.X_validate, self.y_train,
+        self.y_test = train_test_split(self.X_train, self.y_train,
+                                       test_size=0.10, random_state=42)
 
     def define_model(self):
         model = Sequential()
@@ -65,7 +66,7 @@ class Model:
         model.add(Dropout(0.55))
         model.add(Dense(7, activation='softmax'))
 
-        model.compile(optimizer='adam', loss='binary_crossentropy',
+        model.compile(optimizer='adam', loss='categorical_crossentropy',
                       metrics=['accuracy'])
 
     # Entry point to training the model
@@ -76,11 +77,7 @@ class Model:
         self.model = self.define_model()
         self.model.fit(self.X_train, self.y_train,
                        batch_size=self.batch_size,
-                       steps_per_epoch=self.X_train.shape[0] //
-                       self.batch_size,
                        epochs=self.epochs,
                        validation_data=(self.X_validate, self.y_validate),
-                       validation_steps=self.X_validate.shape[0] //
-                       self.batch_size,
                        callbacks=[self.learning_rate_reduction])
         self.model.evaluate(self.X_test, self.y_test, verbose=1)
