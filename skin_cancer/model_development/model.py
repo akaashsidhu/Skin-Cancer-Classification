@@ -1,53 +1,67 @@
-import numpy as np
 
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
+from keras.callbacks import ReduceLROnPlateau
+from sklearn.model_selection import train_test_split
 
 
 class Model:
-    def __init__(self):
+    def __init__(self, X, y):
         # Model parameters
-        self.epochs = 10
-        self.batch_size = 32
-        self.num_class = 6
+        self.epochs = 50
+        self.batch_size = 100
+        self.num_class = 7
         self.num_rows = 28
         self.num_cols = 28
-
-        # Data
-        self.X: np.array
-        self.y: np.array
+        self.learning_rate_reduction = ReduceLROnPlateau(monitor='val_accuracy',  # noqa
+                                                         patience=3,
+                                                         verbose=1,
+                                                         factor=0.5,
+                                                         min_lr=0.00001)
+        self.X = X
+        self.y = y
 
         self.model: Sequential
 
+    def split(self):
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X, self.y, test_size=0.20, random_state=42)  # noqa
+        self.X_train, self.X_validate, self.y_train, self.y_validate = train_test_split(self.X_train, self.y_train, test_size=0.10, random_state=42)  # noqa
+
     def define_model(self):
         model = Sequential()
-        model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(self.num_rows, self.num_cols, 3)))  # noqa
-        model.add(MaxPooling2D((2, 2)))
-        model.add(Dropout(0.1))
-        model.add(Conv2D(64, (3, 3), activation='relu'))
-        model.add(Dropout(0.3))
+        model.add(Conv2D(32, 3, padding='same', activation='relu',
+                         input_shape=(self.num_rows, self.num_cols, 3)))
+        model.add(Conv2D(32, 3, padding='same', activation='relu'))
+        model.add(MaxPooling2D())
+        model.add(Dropout(0.25))
+
+        model.add(Conv2D(64, 3, padding='same', activation='relu',
+                         input_shape=(self.num_rows, self.num_cols, 3)))
+        model.add(Conv2D(64, 3, padding='same', activation='relu'))
+        model.add(MaxPooling2D())
+        model.add(Dropout(0.4))
+
+        model.add(Conv2D(128, 3, padding='same', activation='relu'))
+        model.add(MaxPooling2D())
+        model.add(Dropout(0.5))
         model.add(Flatten())
-        model.add(Dense(128, activation='relu'))
-        model.add(Dropout(0.3))
-        model.add(Dense(self.num_classes, activation='softmax'))
+        model.add(Dense(512, activation='relu'))
+        model.add(Dropout(0.55))
+        model.add(Dense(7, activation='softmax'))
 
-        model.compile(loss='categorical_crossentropy',
-                      optimizer='adam',
+        model.compile(optimizer='adam',
+                      loss='categorical_crossentropy',
                       metrics=['accuracy'])
-
-    def reshape_data(self, data):
-        y = data['label']
-        X = data.drop(columns='label')
-        X = np.array(X)
-        self.X = X.reshape(X.shape[0], self.num_rows, self.num_cols, 3)
-        self.y = np.eye(self.num_classes)[np.array(y.astype(int)).reshape(-1)]
+        return model
 
     # Entry point to training the model
     # Consumes data from DataPipeline
-    def model_runner(self, data):
-        self.reshape_data(data)
+    def model_runner(self):
+        self.split()
         self.model = self.define_model()
-        self.model.fit(self.X, self.y,
-                       batch_size=self.batch_size,
-                       epochs=self.epochs)
+        self.model.fit(self.X_train, self.y_train,
+                       batch_size=self.batch_size, epochs=self.epochs,
+                       validation_data=(self.X_validate, self.y_validate),
+                       callbacks=[self.learning_rate_reduction])
+        # self.model.evaluate(self.X_test, self.y_test, verbose=1)
