@@ -31,7 +31,7 @@ def skin_lesion_classification(image_file: bytes = File(...)):
 
     logger.info('Image has been resized')
 
-    image = img_to_array(image)
+    image = img_to_array(image)/255
     image = np.expand_dims(image, axis=0)
     image = imagenet_utils.preprocess_input(image)
 
@@ -42,4 +42,14 @@ def skin_lesion_classification(image_file: bytes = File(...)):
     with graph.as_default():
         predicted_class = model.predict_classes(image)
 
-    return {'predicted class': str(predicted_class[0])}
+    mapping = {
+        0: 'Melanocytic nevi (non-cancerous)',
+        1: 'Melanoma (cancerous)',
+        2: 'Benign keratosis-like lesions (non-cancerous)',
+        3: 'Basal cell carcinoma (cancerous)',
+        4: 'Actinic keratoses (non-cancerous)',
+        5: 'Vascular lesions (non-cancerous)',
+        6: 'Dermatofibroma (non-cancerous)'
+    }
+
+    return {'predicted class': mapping[predicted_class[0]]}
