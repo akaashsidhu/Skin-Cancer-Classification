@@ -4,7 +4,6 @@ import numpy as np
 
 from PIL import Image
 from keras.preprocessing.image import img_to_array
-from keras.applications import imagenet_utils
 
 from skin_cancer.model_development.model import Model
 
@@ -23,9 +22,9 @@ def test_basic_model_performance(pic, expected_result):
         image = image.convert('RGB')
 
     image = image.resize((28, 28))
-    image = img_to_array(image)/255
+    image = img_to_array(image)
     image = np.expand_dims(image, axis=0)
-    image = imagenet_utils.preprocess_input(image)
+    image = image / 255.0
 
     predicted_class = model.predict_classes(image)
 
