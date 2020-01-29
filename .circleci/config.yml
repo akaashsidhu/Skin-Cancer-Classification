@@ -20,5 +20,9 @@ jobs:
           command: |
             . venv/bin/activate
             flake8 skin_cancer
-      # Run test cases here
+      - run:
+          name: run tests
+          command: |
+            . venv/bin/activate
+            pytest
       # Deployment instructions here

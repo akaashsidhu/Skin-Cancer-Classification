@@ -1,12 +1,9 @@
 import os
 import sys
-import kaggle
 import pandas as pd
 import numpy as np
 
 from dotenv import load_dotenv
-
-kaggle.api.authenticate()
 
 
 class DataPipeline:
@@ -54,6 +51,7 @@ class DataPipeline:
     def download_files_from_kaggle(self):
         if not os.path.isfile(os.path.join(self.data_path, 'hmnist_28_28_RGB.csv')):  # noqa
             try:
+                import kaggle
                 kaggle.api.authenticate()
                 kaggle.api.dataset_download_files('kmader/skin-cancer-mnist-ham10000',  # noqa
                                             path=self.data_path, unzip=True)

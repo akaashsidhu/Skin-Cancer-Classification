@@ -1,11 +1,14 @@
-fastapi==0.45.0
+fastapi[all]==0.39.0
 flake8==3.5.0
 kaggle==1.5.6
 keras==2.3.1
-numpy==1.17.2
+numpy==1.16.4
 pandas==0.22.0
+Pillow==5.3.0
 pre-commit==1.18.2
+pytest==5.3.1
 python-dotenv==0.10.3
 scikit-learn==0.21.3
 seaborn==0.9.0
+tensorflow==1.13.1
 uvicorn==0.10.8
