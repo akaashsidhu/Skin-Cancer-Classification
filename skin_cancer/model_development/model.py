@@ -1,34 +1,30 @@
 
+import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
-from keras.callbacks import ReduceLROnPlateau
 
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import f1_score
 
 from skin_cancer.model_development.data import DataPipeline
 
 
 class Model:
     def __init__(self):
-        self.epochs = 50
+        self.epochs = 20
         self.batch_size = 100
         self.num_class = 7
         self.num_rows = 28
         self.num_cols = 28
-        self.learning_rate_reduction = ReduceLROnPlateau(monitor='val_accuracy',  # noqa
-                                                         patience=3,
-                                                         verbose=1,
-                                                         factor=0.5,
-                                                         min_lr=0.00001)
 
-        self.test_performance_threshold = 0.8
+        self.accuracy_threshold = 0.8
+        self.f1_threshold = 0.75
 
         self.model: Sequential
 
     def partition_data(self, X, y):
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X, y, test_size=0.20, random_state=42)  # noqa
-        self.X_train, self.X_validate, self.y_train, self.y_validate = train_test_split(self.X_train, self.y_train, test_size=0.10, random_state=42)  # noqa
 
     def define_model(self):
         model = Sequential()
@@ -62,12 +58,12 @@ class Model:
         self.partition_data(X, y)
         self.model = self.define_model()
         self.model.fit(self.X_train, self.y_train,
-                       batch_size=self.batch_size, epochs=self.epochs,
-                       validation_data=(self.X_validate, self.y_validate),
-                       callbacks=[self.learning_rate_reduction])
+                       batch_size=self.batch_size, epochs=self.epochs)
         loss, acc = self.model.evaluate(self.X_test, self.y_test)
-        if acc >= self.test_performance_threshold:
-            self.model.save('data/models/weights.h5')
+        f1 = f1_score(self.model.predict_classes(self.X_test),
+                      [np.argmax(y) for y in self.y_test], average='macro')
+        if acc >= self.test_performance_threshold and f1 >= self.f1_threshold:
+            self.model.save('skin_cancer/data/models/weights.h5')
 
 
 if __name__ == '__main__':
