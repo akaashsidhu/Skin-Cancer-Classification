@@ -8,9 +8,6 @@ from dotenv import load_dotenv
 
 class DataPipeline:
     def __init__(self):
-        # List of preprocessing steps
-        # Applied in the order they appear
-
         self.data_path = os.path.join(os.getcwd(), 'data')
         self.skin_data: pd.DataFrame
         self.X: np.array
@@ -31,7 +28,7 @@ class DataPipeline:
             caused by lights and shadows in an image.The range can be described
             with a 0.0-1.0 where 0.0 means 0 (0x00) and 1.0 means 255 (0xFF)
         '''
-        self.X = self.skin_data.drop(columns='label')/255
+        self.X = self.skin_data.drop(columns='label')/255.0
         self.y = self.skin_data['label']
 
     def reshape_img(self):
