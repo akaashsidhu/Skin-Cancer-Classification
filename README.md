@@ -19,6 +19,31 @@ This repo uses the Kaggle API to fetch the dataset. Follow these steps to access
 
 We also use `pre-commit` hooks to keep our code clean. Please enable this using `pre-commit install` prior to making any code changes.
 
+### Model Weights
+
+This repo has pre-trained model weights that are too large to be hosted on GitHub. Follow these steps to download the weights:
+
+1. Move to the `skin_cancer/data/models/` directory. This is where the downloaded file needs to be placed.
+2. In terminal, input the following command `wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=1pq4bJobGizZ_b2lbzODXFh9CCTvrZ482' -O weights.h5`
+
+This should download the file which completes the set-up.
+
+### Docker
+To deploy this project, a docker container was used to build, share, and run our application. 
+
+1. Install Docker
+2. Run the dockers container using `docker build . -t skin_cancer`. This will build everything in the repository.
+3. Once the docker container is build run the following command to generate a docker image and the command in the DockerFile will also launch the app: `docker run -i -d -p 8080:5000 skin_cancer`
+
+### FastAPI
+> FastAPI is a modern, fast (high-performance), web framework for building APIs with Python 3.6+ based on standard Python type hints.
+> Source: https://fastapi.tiangolo.com/
+
+Therefore, this application was created using FastAPI. In order to deploy using FastAPI and Docker, a routers directory was created. Within the routers directory, a `skin_cancer_router.py` file was created. Within the `skin_cancer` directory, an `app.py` file is needed to define the app and its router.
+
+### Performance Results
+Overall, the test performance of the model is approximatley 90% while the testing of the model yielded 81%.
+
 ## The Skin Cancer MNIST:HAM1000 Dataset
 ### Skin Lesion Classifications
 
@@ -41,7 +66,7 @@ The distributionof the 7 different classifications in the dataset is visualized 
 
 ![cancer 5](https://user-images.githubusercontent.com/44474067/71536999-e9000000-28e3-11ea-8a59-32a9152900bd.png)
 
-There is an issue regarding overfitting of Melanocytic nevi, which will be addressed using image augmentation during the model development process.
+There is an issue regarding overfitting of Melanocytic nevi, which will be addressed using image augmentation during the model development process. 
 
 ### Analysis: Age & Gender
 
