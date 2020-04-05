@@ -19,6 +19,15 @@ This repo uses the Kaggle API to fetch the dataset. Follow these steps to access
 
 We also use `pre-commit` hooks to keep our code clean. Please enable this using `pre-commit install` prior to making any code changes.
 
+### Model Weights
+
+This repo has pre-trained model weights that are too large to be hosted on GitHub. Follow these steps to download the weights:
+
+1. Move to the `skin_cancer/data/models/` directory. This is where the downloaded file needs to be placed.
+2. In terminal, input the following command `wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=1pq4bJobGizZ_b2lbzODXFh9CCTvrZ482' -O weights.h5`
+
+This should download the file which completes the set-up.
+
 ### Docker
 To deploy this project, a docker container was used to build, share, and run our application. 
 
@@ -57,7 +66,7 @@ The distributionof the 7 different classifications in the dataset is visualized 
 There is an issue regarding overfitting of Melanocytic nevi, which will be addressed using image augmentation during the model development process.
 
 ### Performance Results
-Overall, the training performance of the model is approximatley 78% while the testing of the model yielded 80%.
+Overall, the test performance of the model is approximatley 90% while the testing of the model yielded 81%. 
 
 ### Analysis: Age & Gender
 
