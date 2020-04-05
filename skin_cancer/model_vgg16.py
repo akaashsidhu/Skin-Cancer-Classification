@@ -7,7 +7,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import ReduceLROnPlateau
 from keras.models import Sequential
 from keras import layers
-from skin_cancer.model_development.data_vgg16 import DataPipeline
+from data_vgg16 import DataPipeline
 
 
 class Transfer_Model:
@@ -29,18 +29,16 @@ class Transfer_Model:
         self.train_datagen = ImageDataGenerator(rotation_range=60, width_shift_range=0.2, height_shift_range=0.2,  # noqa
                                            shear_range=0.2, zoom_range=0.2, fill_mode='nearest')  # noqa
 
-    def load_data(self, X, y):
-
-        pickle_in = open('X_train.pickle', 'rb')
+        pickle_in = open('model_development/X_train.pickle', 'rb')
         self.X_train = pickle.load(pickle_in)
 
-        pickle_in = open('X_test.pickle', 'rb')
+        pickle_in = open('model_development/X_test.pickle', 'rb')
         self.X_test = pickle.load(pickle_in)
 
-        pickle_in = open('y_train.pickle', 'rb')
+        pickle_in = open('model_development/y_train.pickle', 'rb')
         self.y_train = pickle.load(pickle_in)
 
-        pickle_in = open('y_test.pickle', 'rb')
+        pickle_in = open('model_development/y_test.pickle', 'rb')
         self.y_test = pickle.load(pickle_in)
 
     def manipulate_data(self, X, y):
@@ -99,7 +97,6 @@ class Transfer_Model:
 
     def model_runner(self, X, y):
 
-        self.load_data(X, y)
         self.manipulate_data(X, y)
         self.model = self.pretrained()
         self.model.fit_generator(self.train_datagen.flow(self.X_train, self.y_train,  # noqa
