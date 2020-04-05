@@ -73,52 +73,54 @@ class DataPipeline:
     def organize_folders(self):
 
         '''Make the folders, create folders for each id and move images into them'''  # noqa
+        if os.path.exists(self.train_folder):
+            print('Folder Exists')
+        else:
+            os.mkdir(self.train_folder)
+            os.mkdir(self.test_folder)
 
-        os.mkdir(self.train_folder)
-        os.mkdir(self.test_folder)
+            os.mkdir(self.train)
+            os.mkdir(self.test)
 
-        os.mkdir(self.train)
-        os.mkdir(self.test)
+            for f in os.listdir(self.image_path):
+                pics = os.listdir(self.image_path)
+                numpics = len(pics)
+                numtestpics = round(self.t * numpics)
 
-        for f in os.listdir(self.image_path):
-            pics = os.listdir(self.image_path)
-            numpics = len(pics)
-            numtestpics = round(self.t * numpics)
+            test_pics = random.sample(pics, numtestpics)
 
-        test_pics = random.sample(pics, numtestpics)
+            for p in test_pics:
+                file_path = f'{self.image_path}/{p}'  # noqa
+                test_path = f'{self.test}/{p}'  # noqa
 
-        for p in test_pics:
-            file_path = f'{self.image_path}/{p}'
-            test_path = f'{self.test}/{p}'  # noqa
+            os.chdir(self.train)
 
-        os.chdir(self.train)
+            for f in self.dx_unique():
+                os.makedirs(f'{f}/')
 
-        for f in self.dx_unique():
-            os.makedirs(f'{f}/')
+            os.chdir(self.test)
 
-        os.chdir(self.test)
+            for f in self.dx_unique():
+                os.makedirs(f'{f}/')
 
-        for f in self.dx_unique():
-            os.makedirs(f'{f}/')
+            os.chdir(self.image_path)
 
-        os.chdir(self.image_path)
+            for p in self.skin_data.itertuples():
+                try:
+                    filepath = f'{self.train_folder}/{p.image_id}.jpg'
+                    trainpath = f'{self.train}/{p.dx}/{p.image_id}.jpg'
+                    os.rename(f'{filepath}', f'{trainpath}')
+                except OSError:
+                    pass
+                # This moves the images based on their dx category into sub-folders to be used for training  # noqa
 
-        for p in self.skin_data.itertuples():
-            try:
-                filepath = f'{self.train_folder}/{p.image_id}.jpg'
-                trainpath = f'{self.train}/{p.dx}/{p.image_id}.jpg'
-                os.rename(f'{filepath}', f'{trainpath}')
-            except OSError:
-                pass
-            # This moves the images based on their dx category into sub-folders to be used for training  # noqa
-
-        for p in self.skin_data.itertuples():
-            try:
-                filepath = f'{self.test_folder}/{p.image_id}.jpg'  # noqa
-                testpath = f'{self.test}/{p.dx}/{p.image_id}.jpg'  # noqa
-                os.rename(f'{filepath}', f'{testpath}')
-            except OSError:
-                pass
+            for p in self.skin_data.itertuples():
+                try:
+                    filepath = f'{self.test_folder}/{p.image_id}.jpg'  # noqa
+                    testpath = f'{self.test}/{p.dx}/{p.image_id}.jpg'  # noqa
+                    os.rename(f'{filepath}', f'{testpath}')
+                except OSError:
+                    pass
 
         # This moves the images based on their dx category into sub-folders to be used for testing  # noqa
 
